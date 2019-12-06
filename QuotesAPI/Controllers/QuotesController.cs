@@ -34,22 +34,28 @@ namespace QuotesAPI.Controllers
         }
 
         [HttpPost]
-        public void Post([FromBody]Quote quote)
+        public IActionResult Post([FromBody]Quote quote)
         {
             //_quotes.Add(quote);
             _quotesDbContext.Quotes.Add(quote);
             _quotesDbContext.SaveChanges();
+            return StatusCode(StatusCodes.Status201Created);
         }
 
         [HttpPut("{id}")]   
-        public void Put(int id, [FromBody] Quote quote)
+        public IActionResult Put(int id, [FromBody] Quote quote)
         {
             //_quotes[id] = quote;
             var quoteFromDb = _quotesDbContext.Quotes.Find(id);
+            if (quoteFromDb == null)
+            {
+                return NotFound("No data found..");
+            }
             quoteFromDb.Title = quote.Title;
             quoteFromDb.Author = quote.Author;
             quoteFromDb.Description = quote.Description;
             _quotesDbContext.SaveChanges();
+            return Ok("New Data updated");
         }
 
         [HttpDelete("{id}")]
