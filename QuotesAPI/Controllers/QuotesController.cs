@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using QuotesAPI.Data;
 using QuotesAPI.Model;
 
 namespace QuotesAPI.Controllers
@@ -12,35 +13,53 @@ namespace QuotesAPI.Controllers
     [ApiController]
     public class QuotesController : ControllerBase
     {
-        private static List<Quote> _quotes = new List<Quote>()
+        private QuotesDbCotext _quotesDbContext;
+
+        public QuotesController(QuotesDbCotext quotesDbContext)
         {
-            new Quote() { QuoteId = 1, Title = "ABC", Author = "A", Description = "ABCD" },
-            new Quote() { QuoteId = 2, Title = "DEF", Author = "D", Description = "DEFG" }
-        };
+            _quotesDbContext = quotesDbContext;
+        }
 
-
-            [HttpGet]
+        [HttpGet]
         public IEnumerable<Quote> Get()
+         {
+            return _quotesDbContext.Quotes;
+        }
+
+        [HttpGet("{id}", Name = "Get")]
+        public Quote Get(int id)
         {
-            return _quotes;
+            var quote = _quotesDbContext.Quotes.Find(id);
+            return quote;
         }
 
         [HttpPost]
         public void Post([FromBody]Quote quote)
         {
-            _quotes.Add(quote);
+            //_quotes.Add(quote);
+            _quotesDbContext.Quotes.Add(quote);
+            _quotesDbContext.SaveChanges();
         }
 
         [HttpPut("{id}")]   
         public void Put(int id, [FromBody] Quote quote)
         {
-            _quotes[id] = quote;
+            //_quotes[id] = quote;
+            var quoteFromDb = _quotesDbContext.Quotes.Find(id);
+            quoteFromDb.Title = quote.Title;
+            quoteFromDb.Author = quote.Author;
+            quoteFromDb.Description = quote.Description;
+            _quotesDbContext.SaveChanges();
         }
 
         [HttpDelete("{id}")]
         public void Delete(int id)
         {
-            _quotes.Remove(_quotes[id]);
+            //_quotes.RemoveAt(id);
+            //_quotes.Remove(_quotes[id]);
+            var quote = _quotesDbContext.Quotes.Find(id);
+            _quotesDbContext.Remove((quote));
+            _quotesDbContext.SaveChanges();
         }
     }
 }
