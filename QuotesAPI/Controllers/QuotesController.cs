@@ -21,10 +21,37 @@ namespace QuotesAPI.Controllers
         }
 
         [HttpGet]
-        public IEnumerable<Quote> Get()
-         {
-            return _quotesDbContext.Quotes;
+        public IActionResult Get(string sort)
+        {
+            IQueryable<Quote> quotes;
+            switch (sort)
+            {
+                case "asc":
+                    quotes = _quotesDbContext.Quotes.OrderBy(q => q.CreatedAt);
+                    break;
+                case "desc":
+                    quotes = _quotesDbContext.Quotes.OrderByDescending(q => q.CreatedAt);
+                    break;
+                default:
+                    quotes = _quotesDbContext.Quotes;
+                    break;
+            }
+            return Ok(quotes);
+
         }
+
+        [HttpGet("[action]")]
+        public IActionResult PagingQuote(int? pageNumber, int? pageSize)
+        {
+            var quotes = _quotesDbContext.Quotes;
+
+            var pgNumber = pageNumber ?? 1;
+            var pgSize = pageSize ?? 3;
+
+            return Ok(quotes.Skip((pgNumber - 1) * pgSize).Take(pgSize));
+        }
+
+
 
         [HttpGet("{id}", Name = "Get")]
         public Quote Get(int id)

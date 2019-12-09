@@ -51,7 +51,7 @@ namespace QuotesAPI
                 endpoints.MapControllers();
             });
 
-            quotesDbCotext.Database.EnsureCreated(); 
+            quotesDbCotext.Database.Migrate(); 
         }
     }
 }
