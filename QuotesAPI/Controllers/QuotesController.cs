@@ -21,8 +21,9 @@ namespace QuotesAPI.Controllers
         }
 
         [HttpGet]
+        [ResponseCache(Duration = 10, Location = ResponseCacheLocation.Client)]
         public IActionResult Get(string sort)
-        {
+        { 
             IQueryable<Quote> quotes;
             switch (sort)
             {
