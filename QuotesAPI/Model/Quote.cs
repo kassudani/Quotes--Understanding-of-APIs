@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
+using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 
 namespace QuotesAPI.Model
@@ -22,5 +23,8 @@ namespace QuotesAPI.Model
         public string Description { get; set; }
         public string Type { get; set; }
         public DateTime CreatedAt { get; set; }
+
+        [JsonIgnore]
+        public string UserId { get; set; }
     }
 }
